@@ -9,8 +9,8 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const loginForm = ref({
-  username: "",
-  password: "",
+  username: "admin",
+  password: "123456",
 });
 
 const loading = ref(false);

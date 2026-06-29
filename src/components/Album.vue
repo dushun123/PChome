@@ -1,33 +1,22 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useAlbumStore, type Photo } from '@/store/modules/album'
-import { Image } from 'lucide-vue-next'
-import { directive as viewer } from 'v-viewer'
+import { onMounted } from "vue";
+import { useAlbumStore, type Photo, type Album } from "@/store/modules/album";
+import { Image } from "lucide-vue-next";
+import { directive as viewer } from "v-viewer";
 
-const albumStore = useAlbumStore()
+const albumStore = useAlbumStore();
 
 // v-viewer 指令配置
-const vViewer = viewer({
-  navbar: true,
-  title: true,
-  toolbar: true,
-  tooltip: true,
-  movable: true,
-  zoomable: true,
-  scalable: true,
-  transition: true,
-  fullscreen: true,
-  keyboard: true
-})
+const vViewer = viewer();
 
 onMounted(() => {
-  albumStore.loadAlbums()
-})
+  albumStore.loadAlbums();
+});
 
 // 获取相册所有照片的URL列表
-const getPhotoUrls = (album: Photo[]) => {
-  return album.photos.map(p => p.url)
-}
+const getPhotoUrls = (album: Album) => {
+  return album.photos.map((p) => p.url);
+};
 </script>
 
 <template>
@@ -57,7 +46,7 @@ const getPhotoUrls = (album: Photo[]) => {
             <img
               v-viewer="{
                 images: getPhotoUrls(album),
-                initialViewIndex: photoIndex
+                initialViewIndex: photoIndex,
               }"
               :src="photo.thumbnail"
               :alt="photo.title"

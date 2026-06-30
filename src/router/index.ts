@@ -3,6 +3,8 @@ import { useUserStore } from "@/store/modules/user";
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
 import AlbumPage from "@/views/AlbumPage.vue";
+import CodeGenerator from "@/views/CodeGenerator.vue";
+import MapPage from "@/views/MapPage.vue";
 import NotFound from "@/views/NotFound.vue";
 
 // 定义路由配置
@@ -23,6 +25,18 @@ const routes = [
     path: "/album",
     name: "Album",
     component: AlbumPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/code-generator",
+    name: "CodeGenerator",
+    component: CodeGenerator,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/map",
+    name: "Map",
+    component: MapPage,
     meta: { requiresAuth: true },
   },
   {

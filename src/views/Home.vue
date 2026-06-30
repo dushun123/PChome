@@ -3,7 +3,14 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/modules/user";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { Image, FolderOpen, Settings, LogOut } from "lucide-vue-next";
+import {
+  Image,
+  FolderOpen,
+  Settings,
+  LogOut,
+  QrCode,
+  Map,
+} from "lucide-vue-next";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -17,6 +24,20 @@ const menuItems = [
     icon: Image,
     path: "/album",
     color: "#409eff",
+  },
+  {
+    id: "map",
+    label: "地图浏览",
+    icon: Map,
+    path: "/map",
+    color: "#f56c6c",
+  },
+  {
+    id: "code-generator",
+    label: "码生成器",
+    icon: QrCode,
+    path: "/code-generator",
+    color: "#e6a23c",
   },
   {
     id: "files",

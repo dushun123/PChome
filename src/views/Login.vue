@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store/modules/user";
@@ -14,6 +14,13 @@ const loginForm = ref({
 });
 
 const loading = ref(false);
+const isVisible = ref(false);
+
+onMounted(() => {
+  setTimeout(() => {
+    isVisible.value = true;
+  }, 100);
+});
 
 const handleLogin = async () => {
   if (!loginForm.value.username || !loginForm.value.password) {
@@ -23,7 +30,6 @@ const handleLogin = async () => {
 
   loading.value = true;
 
-  // 模拟异步操作
   setTimeout(() => {
     const success = userStore.login(
       loginForm.value.username,
@@ -45,17 +51,20 @@ const handleLogin = async () => {
 <template>
   <div class="login-container">
     <div class="login-background">
-      <div class="background-pattern"></div>
+      <div class="bg-shape shape-1"></div>
+      <div class="bg-shape shape-2"></div>
+      <div class="bg-shape shape-3"></div>
+      <div class="bg-shape shape-4"></div>
     </div>
 
-    <div class="login-card">
+    <div class="login-card" :class="{ 'card-visible': isVisible }">
       <div class="login-header">
-        <h1 class="login-title">个人相册管理系统</h1>
-        <p class="login-subtitle">欢迎登录，开始浏览您的相册</p>
+        <h1 class="login-title">Dawson 个人管理系统</h1>
+        <p class="login-subtitle">欢迎登录，开始使用您的个人空间</p>
       </div>
 
       <el-form class="login-form" @submit.prevent="handleLogin">
-        <el-form-item>
+        <el-form-item class="form-item-1">
           <el-input
             v-model="loginForm.username"
             placeholder="请输入用户名"
@@ -68,7 +77,7 @@ const handleLogin = async () => {
           </el-input>
         </el-form-item>
 
-        <el-form-item>
+        <el-form-item class="form-item-2">
           <el-input
             v-model="loginForm.password"
             type="password"
@@ -83,7 +92,7 @@ const handleLogin = async () => {
           </el-input>
         </el-form-item>
 
-        <el-form-item>
+        <el-form-item class="form-item-3">
           <el-button
             type="primary"
             size="large"
@@ -114,6 +123,7 @@ const handleLogin = async () => {
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  overflow: hidden;
 }
 
 .login-background {
@@ -125,28 +135,64 @@ const handleLogin = async () => {
   overflow: hidden;
 }
 
-.background-pattern {
+.bg-shape {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image:
-    radial-gradient(
-      circle at 20% 50%,
-      rgba(120, 119, 198, 0.3) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(255, 177, 153, 0.3) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 20%,
-      rgba(74, 144, 226, 0.2) 0%,
-      transparent 50%
-    );
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  animation: float 20s infinite ease-in-out;
+}
+
+.shape-1 {
+  width: 400px;
+  height: 400px;
+  background: #667eea;
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 300px;
+  height: 300px;
+  background: #764ba2;
+  bottom: -50px;
+  right: -50px;
+  animation-delay: -5s;
+}
+
+.shape-3 {
+  width: 250px;
+  height: 250px;
+  background: #f093fb;
+  top: 50%;
+  left: 10%;
+  animation-delay: -10s;
+}
+
+.shape-4 {
+  width: 350px;
+  height: 350px;
+  background: #4facfe;
+  bottom: 10%;
+  right: 20%;
+  animation-delay: -15s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+  75% {
+    transform: translate(20px, 30px) scale(1.02);
+  }
 }
 
 .login-card {
@@ -157,6 +203,65 @@ const handleLogin = async () => {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(40px) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.login-card.card-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.login-card.card-visible .login-header {
+  animation: fadeInDown 0.6s ease 0.2s both;
+}
+
+.login-card.card-visible .form-item-1 {
+  animation: fadeInUp 0.5s ease 0.3s both;
+}
+
+.login-card.card-visible .form-item-2 {
+  animation: fadeInUp 0.5s ease 0.4s both;
+}
+
+.login-card.card-visible .form-item-3 {
+  animation: fadeInUp 0.5s ease 0.5s both;
+}
+
+.login-card.card-visible .login-footer {
+  animation: fadeIn 0.5s ease 0.6s both;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .login-header {
@@ -188,6 +293,17 @@ const handleLogin = async () => {
 .login-form :deep(.el-input__wrapper) {
   padding: 12px 15px;
   border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.login-form :deep(.el-input__wrapper:hover) {
+  box-shadow: 0 0 0 1px #409eff inset;
+}
+
+.login-form :deep(.el-input__wrapper.is-focus) {
+  box-shadow: 0 0 0 1px #409eff inset;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.2);
 }
 
 .login-button {
@@ -197,15 +313,25 @@ const handleLogin = async () => {
   font-size: 16px;
   font-weight: 500;
   margin-top: 10px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .login-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(64, 158, 255, 0.4);
+}
+
+.login-button:active {
+  transform: translateY(-1px) scale(0.99);
 }
 
 .input-icon {
   color: #909399;
+  transition: color 0.3s ease;
+}
+
+.login-form :deep(.el-input__wrapper.is-focus) .input-icon {
+  color: #409eff;
 }
 
 .login-footer {

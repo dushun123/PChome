@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useAlbumStore, type Photo, type Album } from "@/store/modules/album";
+import { useAlbumStore, type Album } from "@/store/modules/album";
 import { Image, ArrowLeft } from "lucide-vue-next";
-import { directive as viewer } from "v-viewer";
 
 const router = useRouter();
 const albumStore = useAlbumStore();
 
-// v-viewer 指令配置
-const vViewer = viewer();
+const isVisible = ref(false);
 
 onMounted(() => {
   albumStore.loadAlbums();
+  setTimeout(() => {
+    isVisible.value = true;
+  }, 100);
 });
 
 const goBack = () => {
@@ -28,7 +29,7 @@ const getPhotoUrls = (album: Album) => {
 <template>
   <div class="album-page">
     <!-- 顶部导航栏 -->
-    <header class="header">
+    <header class="header" :class="{ 'header-visible': isVisible }">
       <div class="header-content">
         <div class="header-left">
           <ArrowLeft :size="20" class="back-icon" @click="goBack" />
@@ -39,9 +40,7 @@ const getPhotoUrls = (album: Album) => {
         <div class="header-right">
           <span class="photo-count">
             共
-            {{
-              albumStore.albums.reduce((sum, a) => sum + a.photos.length, 0)
-            }}
+            {{ albumStore.albums.reduce((sum, a) => sum + a.photos.length, 0) }}
             张照片
           </span>
         </div>
@@ -50,16 +49,18 @@ const getPhotoUrls = (album: Album) => {
 
     <!-- 主内容区 -->
     <main class="main-content">
-      <div class="content-wrapper">
+      <div class="content-wrapper" :class="{ 'content-visible': isVisible }">
         <div v-if="albumStore.albums.length === 0" class="empty-state">
           <el-empty description="暂无相册" />
         </div>
 
         <div v-else class="photo-grid">
           <div
-            v-for="album in albumStore.albums"
+            v-for="(album, albumIndex) in albumStore.albums"
             :key="album.id"
             class="album-section"
+            :class="{ 'album-visible': isVisible }"
+            :style="{ animationDelay: `${albumIndex * 0.2 + 0.3}s` }"
           >
             <h3 class="album-name">{{ album.name }}</h3>
             <div class="photos-container">
@@ -67,15 +68,19 @@ const getPhotoUrls = (album: Album) => {
                 v-for="(photo, photoIndex) in album.photos"
                 :key="photo.id"
                 class="photo-card"
+                :class="{ 'photo-visible': isVisible }"
+                :style="{
+                  animationDelay: `${albumIndex * 0.2 + photoIndex * 0.05 + 0.4}s`,
+                }"
               >
-                <img
-                  v-viewer="{
-                    images: getPhotoUrls(album),
-                    initialViewIndex: photoIndex,
-                  }"
+                <el-image
                   :src="photo.thumbnail"
                   :alt="photo.title"
                   class="photo-image"
+                  fit="cover"
+                  :preview-src-list="getPhotoUrls(album)"
+                  :initial-index="photoIndex"
+                  preview-teleported
                 />
               </div>
             </div>
@@ -89,7 +94,8 @@ const getPhotoUrls = (album: Album) => {
 <style scoped>
 .album-page {
   min-height: 100vh;
-  background: #f5f7fa;
+  background: linear-gradient(180deg, #f5f7fa 0%, #e8ecf1 100%);
+  overflow: hidden;
 }
 
 .header {
@@ -101,6 +107,12 @@ const getPhotoUrls = (album: Album) => {
   right: 0;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-100%);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.header.header-visible {
+  transform: translateY(0);
 }
 
 .header-content {
@@ -122,15 +134,27 @@ const getPhotoUrls = (album: Album) => {
 .back-icon {
   color: #ffffff;
   cursor: pointer;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .back-icon:hover {
   color: #409eff;
+  transform: translateX(-3px);
 }
 
 .header-icon {
   color: #409eff;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .header-title {
@@ -138,6 +162,10 @@ const getPhotoUrls = (album: Album) => {
   font-weight: 500;
   color: #ffffff;
   margin: 0;
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .header-right {
@@ -148,6 +176,9 @@ const getPhotoUrls = (album: Album) => {
 .photo-count {
   color: #ffffff;
   font-size: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
 }
 
 .main-content {
@@ -162,6 +193,14 @@ const getPhotoUrls = (album: Album) => {
   border-radius: 12px;
   padding: 32px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.content-wrapper.content-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .empty-state {
@@ -176,6 +215,19 @@ const getPhotoUrls = (album: Album) => {
 
 .album-section {
   margin-bottom: 40px;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.album-section.album-visible {
+  animation: slideInLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes slideInLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .album-name {
@@ -184,6 +236,19 @@ const getPhotoUrls = (album: Album) => {
   color: #5a6e7f;
   margin: 0 0 20px;
   padding-left: 12px;
+  position: relative;
+}
+
+.album-name::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 18px;
+  background: linear-gradient(180deg, #4facfe, #00f2fe);
+  border-radius: 2px;
 }
 
 .photos-container {
@@ -194,17 +259,34 @@ const getPhotoUrls = (album: Album) => {
 
 .photo-card {
   aspect-ratio: 4/3;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: scale(0.8) translateY(20px);
+}
+
+.photo-card.photo-visible {
+  animation: photoZoomIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes photoZoomIn {
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .photo-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.photo-card:active {
+  transform: translateY(-4px) scale(0.98);
 }
 
 .photo-image {
@@ -212,6 +294,11 @@ const getPhotoUrls = (album: Album) => {
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.5s ease;
+}
+
+.photo-card:hover :deep(.el-image__inner) {
+  transform: scale(1.1);
 }
 
 /* 响应式设计 */

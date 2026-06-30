@@ -1,6 +1,6 @@
-# 个人相册管理系统
+# Dawson 个人管理系统
 
-基于 Vue 3 + Element Plus + TypeScript + Vite 构建的个人相册管理系统。
+基于 Vue 3 + Element Plus + TypeScript + Vite 构建的个人管理系统。
 
 ## 账号密码
 
@@ -44,6 +44,10 @@ src/
 ├── router/         # 路由配置
 └── utils/          # 工具函数
 ```
+
+## 部署地址
+
+- Vercel: https://vercel.com/dawsons-projects-b93349c8/p-chome/E2s8GbSXaosfydvKdi6qQTvKxgWh
 
 ## 功能特点
 

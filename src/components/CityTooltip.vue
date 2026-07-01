@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { CityYearlyData } from "@/data/cityData";
+import type { CityYearlyData } from "@/data/cities";
 
 const props = defineProps<{
   name: string;

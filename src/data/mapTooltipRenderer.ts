@@ -2,7 +2,7 @@ import { createApp, h } from "vue";
 import MapTooltip from "@/components/MapTooltip.vue";
 import CityTooltip from "@/components/CityTooltip.vue";
 import { provinceBaseData, getYearlyData } from "@/data/provinceData";
-import { getCityData, hasCityData } from "@/data/cityData";
+import { getCityData, hasCityData } from "@/data/cities";
 
 const htmlCache = new Map<string, string>();
 

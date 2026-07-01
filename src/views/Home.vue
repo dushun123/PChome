@@ -10,6 +10,7 @@ import {
   LogOut,
   QrCode,
   Map,
+  BarChart3,
 } from "lucide-vue-next";
 
 const router = useRouter();
@@ -31,6 +32,13 @@ const menuItems = [
     icon: Map,
     path: "/map",
     color: "#f56c6c",
+  },
+  {
+    id: "statistics",
+    label: "数据统计",
+    icon: BarChart3,
+    path: "/statistics",
+    color: "#e6a23c",
   },
   {
     id: "code-generator",

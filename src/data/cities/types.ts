@@ -1,4 +1,5 @@
 // 地级市年度数据（最近5年：2020-2024）
+// 人口相关字段单位为万人，GDP 单位为亿元，人均 GDP 单位为元
 export interface CityYearlyData {
   year: number;
   total: number; // 总人口（万）

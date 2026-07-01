@@ -5,6 +5,7 @@ import Home from "@/views/Home.vue";
 import AlbumPage from "@/views/AlbumPage.vue";
 import CodeGenerator from "@/views/CodeGenerator.vue";
 import MapPage from "@/views/MapPage.vue";
+import StatisticsPage from "@/views/StatisticsPage.vue";
 import NotFound from "@/views/NotFound.vue";
 
 // 定义路由配置
@@ -37,6 +38,12 @@ const routes = [
     path: "/map",
     name: "Map",
     component: MapPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/statistics",
+    name: "Statistics",
+    component: StatisticsPage,
     meta: { requiresAuth: true },
   },
   {

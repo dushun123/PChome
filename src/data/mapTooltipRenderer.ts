@@ -3,6 +3,7 @@ import MapTooltip from "@/components/MapTooltip.vue";
 import CityTooltip from "@/components/CityTooltip.vue";
 import { provinceBaseData, getYearlyData } from "@/data/provinceData";
 import { getCityData, hasCityData } from "@/data/cities";
+import { cityFeatureData } from "@/data/cityFeatureData";
 
 const htmlCache = new Map<string, string>();
 
@@ -44,8 +45,9 @@ export function getCityTooltipHtml(
   }
 
   const cityData = getCityData(cityName);
-  if (!cityData) {
-    // 没有数据时返回简单提示
+  const feature = cityFeatureData[cityName];
+
+  if (!cityData && !feature) {
     return `<div style="padding: 10px; min-width: 160px;">
       <div style="font-size: 14px; font-weight: bold; color: #4facfe; margin-bottom: 6px;">${cityName}</div>
       <div style="font-size: 12px; color: rgba(255,255,255,0.5);">暂无详细数据</div>
@@ -54,9 +56,10 @@ export function getCityTooltipHtml(
 
   const html = renderVueToHtml(
     h(CityTooltip, {
-      name: cityData.name,
-      province: cityData.province,
-      history: cityData.history,
+      name: cityData?.name || cityName,
+      province: cityData?.province || provinceName,
+      history: cityData?.history || [],
+      feature: feature || undefined,
     }),
   );
 
